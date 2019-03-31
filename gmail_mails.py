@@ -1,4 +1,4 @@
-from apiclient.discovery import build
+from googleapiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
 import time
@@ -55,19 +55,23 @@ def get_emails(service, last_mail):
 
             for field in msg['payload']['headers']:
                 if field['name'] == 'From':
-                    mail['from'] = field['value']
+                    from_email = field['value'].encode('utf-8')
+                    if len(from_email.split('<')) > 1:
+                        mail['from'] = from_email.split('<')[0]
+                    else:
+                        mail['from'] = from_email
                 elif field['name'] == 'To':
-                    mail['to'] = field['value']
+                    mail['to'] = field['value'].encode('utf-8')
                 elif field['name'] == 'Date':
-                    mail['date'] = field['value']
+                    mail['date'] = field['value'].encode('utf-8')
                 elif field['name'] == 'Subject':
-                    mail['subject'] = field['value']
+                    mail['subject'] = field['value'].encode('utf-8')
 
             if 'snippet' in msg:
-                mail['snippet'] = msg['snippet']
+                mail['snippet'] = msg['snippet'].encode('utf-8')
 
             if 'internalDate' in msg:
-                mail['date'] = str(time.strftime('%d %b, %I:%M %p', time.localtime(int(msg['internalDate']) / 1000)))
+                mail['date'] = str(time.strftime('%d %b, %I:%M %p', time.localtime(int(msg['internalDate']) / 1000))).encode('utf-8')
 
             if compare(last_mail, mail):
                 break

@@ -1,7 +1,6 @@
 import os, schedule, time
 import gmail_mails
 
-APP_ICON = 'gmail.icns'
 GMAIL_LINK = 'https://mail.google.com'
 SOUND = 'default'
 
@@ -9,14 +8,13 @@ last_mail = {}
 
 
 # The notifier function
-def notify(title, subtitle, message, appIcon=APP_ICON, link=GMAIL_LINK, sound=SOUND):
-    t = '-title {!r}'.format(title)
-    s = '-subtitle {!r}'.format(subtitle)
-    m = '-message {!r}'.format(message)
-    p = '-appIcon {!r}'.format(appIcon)
+def notify(title, subtitle, message, link=GMAIL_LINK, sound=SOUND):
+    t = '-title {!r}'.format(title).encode('utf-8')
+    s = '-subtitle {!r}'.format(subtitle).encode('utf-8')
+    m = '-message {!r}'.format(message).encode('utf-8')
     l = '-open {!r}'.format(link)
     sound = '-sound {!r}'.format(sound)
-    os.system('terminal-notifier {}'.format(' '.join([m, t, s, p, l, s, sound])))
+    os.system('terminal-notifier.app/Contents/MacOS/terminal-notifier {}'.format(' '.join([m, t, s, l, sound])))
 
 
 def send_notifications(service):
@@ -24,8 +22,8 @@ def send_notifications(service):
     emails, last_mail = gmail_mails.get_emails(service, last_mail)
 
     for i in range(len(emails)):
-        notify(title=emails[i]['subject'] + ' ' + emails[i]['date'],
-               subtitle=emails[i]['from'],
+        notify(title=emails[i]['subject'],
+               subtitle=emails[i]['from'] + '|' + emails[i]['date'],
                message=emails[i]['snippet'])
         time.sleep(3)
 
