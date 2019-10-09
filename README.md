@@ -1,1 +1,1 @@
-# Gmail Desktop Notification tool for Mac
+# A Gmail desktop notification tool for Mac that checks for mails in your Gmail inbox every 60 minutes.
